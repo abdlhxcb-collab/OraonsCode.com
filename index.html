@@ -7,6 +7,7 @@
   <style>
     html {
       height: 100%;
+      background-color: #064e3b; /* لون الخلفية الأساسي لتغطية أي فراغات */
 
 
     }
@@ -258,29 +259,28 @@
       background: transparent;
     }
 
-    /* أيقونة التحميل (سهم لأسفل) */
+    /* أيقونة التحميل (سهم لأسفل) - تصميم مبسط وواضح */
     .download-icon::before {
       content: "";
       position: absolute;
       width: 8px;
       height: 8px;
-      top: 4px;
+      top: 3px;
       left: 4px;
       border: none;
-      border-left: 1px solid currentColor;
-      border-bottom: 1px solid currentColor;
-      transform: rotate(-45deg);
+      border-bottom: 2px solid currentColor; /* خط أفقي */
     }
 
     .download-icon::after {
       content: "";
       position: absolute;
-      width: 1px;
-      height: 10px;
-      top: 3px;
+      width: 0;
+      height: 0;
+      top: 0px;
       left: 7px;
-      background: currentColor;
-      border: none;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 6px solid currentColor; /* رأس السهم */
     }
 
     .small-info {
@@ -415,9 +415,8 @@
             </button>
 
             <button class="btn btn-ghost" onclick="downloadText()">
-	      <span class="btn-icon download-icon"></span>
-	      <span>تحميل كملف</span>
-	    </button>
+              <span>تحميل كملف</span>
+            </button>
 
           </div>
 
