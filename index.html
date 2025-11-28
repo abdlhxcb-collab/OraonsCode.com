@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>مولّد قائمة الأكواد</title>
+  <style>
+    html {
+      height: 100%;
+      overflow: hidden; /* لمنع ظهور أي scrollbar غير مرغوب فيه قد يسبب حواف بيضاء */
+      background-color: #064e3b; /* لون الخلفية الأساسي لتغطية أي فراغات */
+    }
+    :root {
+      --primary: #10b981; /* Emerald Green */
+      --primary-dark: #059669;
+      --bg-gradient: linear-gradient(135deg, #064e3b, #047857, #064e3b);
+      --card-bg: rgba(255, 255, 255, 0.08); /* Lighter, more transparent base for glass effect */
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh; /* دعم ارتفاع الشاشة الديناميكي في الجوال */
+      overflow: hidden; /* لمنع ظهور أي scrollbar غير مرغوب فيه قد يسبب حواف بيضاء */
+      background-attachment: fixed; /* تثبيت الخلفية لضمان تغطيتها لكامل الشاشة */
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px; /* زيادة حجم الخط الأساسي */
+      background-image: var(--bg-gradient);
+	      color: #ffffff; /* لون النص المدخل أبيض ناصع */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Lighter, more subtle shadow */
+      padding: 20px 18px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1); /* Lighter border for glass effect */
+      backdrop-filter: blur(20px) saturate(180%); /* Stronger blur and saturation for glass effect */
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title {
+      font-size: clamp(18px, 1.8vw, 22px);
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .subtitle {
+      font-size: 14px; /* زيادة حجم الخط الفرعي */
+      color: #d1d5db;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      font-size: 12px; /* زيادة حجم خط الشارة */
+	      color: #ffffff; /* لون النص المدخل أبيض ناصع */
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--primary); /* تم التعديل */
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 800px) {
+      body {
+        padding: 10px;
+      }
+      .card {
+        padding: 16px 14px 18px;
+        border-radius: 14px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 14px; /* زيادة حجم خط التسمية */
+	      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .hint {
+      font-size: 12px; /* زيادة حجم خط التلميح */
+      color: #d1d5db;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+	      background: rgba(255, 255, 255, 0.05); /* Very light transparent background for inputs */
+	      color: #ffffff;
+      resize: vertical;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px; /* زيادة حجم خط حقل النص */
+      line-height: 1.5;
+      outline: none;
+	      transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	      will-change: border-color, box-shadow, background;
+    }
+
+    textarea::placeholder,
+    input[type="url"]::placeholder {
+      color: #ffffff; /* لون placeholder أبيض ناصع */
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4);
+	      background: rgba(255, 255, 255, 0.1); /* Slightly darker transparent background on focus */
+    }
+
+    input[type="url"] {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+	      background: rgba(4, 120, 87, 0.2); /* Lighter Green/Transparent for Input */
+	      color: #ffffff;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px; /* زيادة حجم خط حقل الإدخال */
+      outline: none;
+	      transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	      will-change: border-color, box-shadow, background;
+    }
+
+    input[type="url"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4);
+	      background: rgba(4, 120, 87, 0.4); /* Darker Green/Transparent on Input Focus */
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      font-size: 14px; /* زيادة حجم خط الزر */
+      padding: 9px 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;	      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	      will-change: transform, box-shadow, background, opacity;  }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #f9fafb;
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(16, 185, 129, 0.7);
+    }
+
+    .btn-ghost {
+	      background: rgba(255, 255, 255, 0.15); /* Transparent background for ghost button */
+      color: #e5e7eb;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-ghost:hover {
+	      background: rgba(255, 255, 255, 0.25); /* Transparent background on ghost button hover */
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+      opacity: 0.9;
+    }
+
+    .btn-icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      position: relative;
+    }
+
+    .btn-icon::before,
+    .btn-icon::after {
+      content: "";
+      position: absolute;
+      border-radius: 4px;
+      border: 1px solid currentColor;
+    }
+
+    .btn-icon::before {
+      width: 12px;
+      height: 9px;
+      top: 4px;
+      left: 0;
+    }
+
+    .btn-icon::after {
+      width: 12px;
+      height: 9px;
+      top: 0;
+      left: 4px;
+      background: transparent;
+    }
+
+    .small-info {
+      margin-top: 8px;
+      font-size: 12px; /* زيادة حجم خط المعلومات الصغيرة */
+      color: #d1d5db;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-soft {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+	      background: var(--primary);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+	      background: rgba(6, 78, 59, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal {
+	      background: #064e3b;
+      border-radius: 16px;
+      padding: 20px 18px 18px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      animation: fadeInScale 0.16s ease-out;
+    }
+
+    .modal-title {
+      font-size: 16px; /* زيادة حجم خط عنوان النافذة المنبثقة */
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #f9fafb;
+    }
+
+    .modal-text {
+      font-size: 14px; /* زيادة حجم خط نص النافذة المنبثقة */
+      color: #d1d5db;
+      margin-bottom: 14px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .modal-count {
+      font-size: 13px; /* زيادة حجم خط عداد النافذة المنبثقة */
+      color: #e5e7eb;
+      margin-bottom: 2px;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="title-block">
+          <div class="title">مولّد قائمة الأكواد</div>
+          <div class="subtitle">تحويل الأكواد إلى صيغة موحّدة جاهزة للاستخدام.</div>
+        </div>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          تنسيق موحّد للأسطر
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- حقول الروابط -->
+        <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label for="activationLinkInput">رابط التفعيل (سيتم تضمينه في الناتج)</label>
+            <div class="hint">يمكنك تغيير هذا الرابط في أي وقت.</div>
+            <input type="url" id="activationLinkInput" placeholder="أدخل رابط التفعيل">
+          </div>
+          <div>
+            <label for="siteLinkInput">رابط الموقع (سيتم تضمينه في الناتج)</label>
+            <div class="hint">يمكنك تغيير هذا الرابط في أي وقت.</div>
+            <input type="url" id="siteLinkInput" placeholder="أدخل رابط الموقع">
+          </div>
+        </div>
+
+        <!-- إدخال الأكواد -->
+        <div>
+          <label for="codesInput">الأكواد</label>
+          <div class="hint">كل كود في سطر مستقل.</div>
+          <textarea id="codesInput" placeholder="A5F36393D0
+8FBF84AE38
+7ECDF90E5C"></textarea>
+
+          <div class="actions">
+            <button class="btn btn-primary" onclick="generateList()">
+              <span>تجهيز القائمة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- النتيجة -->
+        <div>
+          <label for="resultBox">الناتج النهائي</label>
+          <div class="hint">نص جاهز للصق في أي نظام يدعم الأسطر المتعددة.</div>
+          <textarea id="resultBox" readonly placeholder="الناتج يظهر هنا بعد تجهيز القائمة."></textarea>
+
+          <div class="actions">
+            <button class="btn btn-ghost" onclick="copyText()">
+              <span class="btn-icon"></span>
+              <span>نسخ الناتج</span>
+            </button>
+
+          </div>
+
+          <div class="small-info">
+            <span class="dot-soft"></span>
+            <span>يتم النسخ مع الحفاظ على كل سطر كما هو.</span>
+          </div>
+        </div>
+      </div>
+      
+		      <div class="footer" style="text-align: center; margin-top: 20px; font-size: 13px; color: #ffffff; /* لون أبيض ناصع لحقوق النشر */">
+	        <span>
+	        حقوق النشر محفوظة لـ اورانوس
+	        </span>
+	      </div>
+    </div>
+
+
+  </div>
+
+  <!-- نافذة منبثقة -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">تم نسخ النص</div>
+      <div class="modal-count" id="modalCount"></div>
+      <div class="modal-text">
+        تم نسخ المحتوى ويمكن لصقه في الجهة المطلوبة.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const activationLinkInput = document.getElementById('activationLinkInput');
+    const siteLinkInput = document.getElementById('siteLinkInput');
+    const codesInput = document.getElementById('codesInput');
+    const resultBox = document.getElementById('resultBox');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalCount = document.getElementById('modalCount');
+
+    // تحميل الروابط عند بدء التشغيل
+    document.addEventListener('DOMContentLoaded', () => {
+      loadActivationLink();
+      loadSiteLink();
+    });
+
+    // حفظ الروابط عند التغيير
+    activationLinkInput.addEventListener('input', saveActivationLink);
+    siteLinkInput.addEventListener('input', saveSiteLink);
+
+    function generateList() {
+      const raw = codesInput.value.trim();
+      if (!raw) {
+        alert('الرجاء إدخال الأكواد أولاً.');
+        return;
+      }
+
+      const codes = raw
+        .split(/\n+/)
+        .map(c => c.trim())
+        .filter(c => c.length > 0);
+
+      if (!codes.length) {
+        alert('لم يتم التعرف على أي كود صالح.');
+        return;
+      }
+
+      let site = siteLinkInput.value.trim();
+      if (!site.startsWith('http')) {
+        site = 'https://' + site;
+      }
+      if (!site) {
+        site = '';
+      }
+
+      let tutorial = activationLinkInput.value.trim();
+      if (!tutorial.startsWith('http')) {
+        tutorial = 'https://' + tutorial;
+      }
+      if (!tutorial) {
+        tutorial = '';
+      }
+
+      const outputLines = codes.map(code => {
+        return `الكود: ${code} الموقع ${site} شرح التفعيل : ${tutorial}`;
+      });
+
+      resultBox.value = outputLines.join('\n');
+    }
+
+    function copyText() {
+      const value = resultBox.value.trim();
+      if (!value) {
+        alert('لا يوجد ناتج لنسخه.');
+        return;
+      }
+      copyToClipboard(value);
+      const linesCount = value.split('\n').filter(l => l.trim().length > 0).length;
+      modalCount.textContent = `عدد الأسطر: ${linesCount}`;
+      openModal();
+    }
+
+    function saveActivationLink() {
+      localStorage.setItem('wirplus_activation_link', activationLinkInput.value.trim());
+    }
+
+    function loadActivationLink() {
+      const link = localStorage.getItem('wirplus_activation_link');
+      if (link) {
+        activationLinkInput.value = link;
+      } else {
+        // لا يوجد رابط افتراضي ثابت
+      }
+    }
+
+    function saveSiteLink() {
+      localStorage.setItem('wirplus_site_link', siteLinkInput.value.trim());
+    }
+
+    function loadSiteLink() {
+      const link = localStorage.getItem('wirplus_site_link');
+      if (link) {
+        siteLinkInput.value = link;
+      } else {
+        // لا يوجد رابط افتراضي ثابت
+      }
+    }
+
+
+
+    function copyToClipboard(text) {
+      try {
+        navigator.clipboard.writeText(text);
+      } catch (e) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+    }
+
+    function openModal() {
+      modalOverlay.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+      window.getSelection().removeAllRanges();
+    }
+
+    modalOverlay.addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
