@@ -7,8 +7,8 @@
   <style>
     html {
       height: 100%;
-      overflow: hidden; /* لمنع ظهور أي scrollbar غير مرغوب فيه قد يسبب حواف بيضاء */
-      background-color: #064e3b; /* لون الخلفية الأساسي لتغطية أي فراغات */
+
+
     }
     :root {
       --primary: #10b981; /* Emerald Green */
@@ -26,8 +26,8 @@
       margin: 0;
       min-height: 100vh;
       min-height: 100dvh; /* دعم ارتفاع الشاشة الديناميكي في الجوال */
-      overflow: hidden; /* لمنع ظهور أي scrollbar غير مرغوب فيه قد يسبب حواف بيضاء */
-      background-attachment: fixed; /* تثبيت الخلفية لضمان تغطيتها لكامل الشاشة */
+
+
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 15px; /* زيادة حجم الخط الأساسي */
       background-image: var(--bg-gradient);
@@ -147,7 +147,7 @@
       font-size: 13px; /* زيادة حجم خط حقل النص */
       line-height: 1.5;
       outline: none;
-	      transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	      transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out, background 0.2s ease-out;
 	      will-change: border-color, box-shadow, background;
     }
 
@@ -172,7 +172,7 @@
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 13px; /* زيادة حجم خط حقل الإدخال */
       outline: none;
-	      transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	      transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out, background 0.2s ease-out;
 	      will-change: border-color, box-shadow, background;
     }
 
@@ -198,7 +198,7 @@
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      white-space: nowrap;	      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;	      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out, opacity 0.15s ease-out;
 	      will-change: transform, box-shadow, background, opacity;  }
 
     .btn-primary {
@@ -256,6 +256,31 @@
       top: 0;
       left: 4px;
       background: transparent;
+    }
+
+    /* أيقونة التحميل (سهم لأسفل) */
+    .download-icon::before {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      top: 4px;
+      left: 4px;
+      border: none;
+      border-left: 1px solid currentColor;
+      border-bottom: 1px solid currentColor;
+      transform: rotate(-45deg);
+    }
+
+    .download-icon::after {
+      content: "";
+      position: absolute;
+      width: 1px;
+      height: 10px;
+      top: 3px;
+      left: 7px;
+      background: currentColor;
+      border: none;
     }
 
     .small-info {
@@ -351,9 +376,9 @@
         <!-- حقول الروابط -->
         <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 16px;">
           <div>
-            <label for="activationLinkInput">رابط التفعيل (سيتم تضمينه في الناتج)</label>
+            <label for="activationLinkInput">رابط شرح التفعيل (سيتم تضمينه في الناتج)</label>
             <div class="hint">يمكنك تغيير هذا الرابط في أي وقت.</div>
-            <input type="url" id="activationLinkInput" placeholder="أدخل رابط التفعيل">
+            <input type="url" id="activationLinkInput" placeholder="أدخل رابط شرح التفعيل">
           </div>
           <div>
             <label for="siteLinkInput">رابط الموقع (سيتم تضمينه في الناتج)</label>
@@ -388,6 +413,11 @@
               <span class="btn-icon"></span>
               <span>نسخ الناتج</span>
             </button>
+
+            <button class="btn btn-ghost" onclick="downloadText()">
+	      <span class="btn-icon download-icon"></span>
+	      <span>تحميل كملف</span>
+	    </button>
 
           </div>
 
@@ -430,15 +460,7 @@
     const modalOverlay = document.getElementById('modalOverlay');
     const modalCount = document.getElementById('modalCount');
 
-    // تحميل الروابط عند بدء التشغيل
-    document.addEventListener('DOMContentLoaded', () => {
-      loadActivationLink();
-      loadSiteLink();
-    });
 
-    // حفظ الروابط عند التغيير
-    activationLinkInput.addEventListener('input', saveActivationLink);
-    siteLinkInput.addEventListener('input', saveSiteLink);
 
     function generateList() {
       const raw = codesInput.value.trim();
@@ -474,63 +496,59 @@
       }
 
       const outputLines = codes.map(code => {
-        return `الكود: ${code} الموقع ${site} شرح التفعيل : ${tutorial}`;
+        return `الكود: ${code} الموقع ${site} رابط شرح التفعيل : ${tutorial}`;
       });
 
       resultBox.value = outputLines.join('\n');
     }
 
-    function copyText() {
+    async function copyText() {
       const value = resultBox.value.trim();
       if (!value) {
         alert('لا يوجد ناتج لنسخه.');
         return;
       }
-      copyToClipboard(value);
-      const linesCount = value.split('\n').filter(l => l.trim().length > 0).length;
-      modalCount.textContent = `عدد الأسطر: ${linesCount}`;
-      openModal();
-    }
 
-    function saveActivationLink() {
-      localStorage.setItem('wirplus_activation_link', activationLinkInput.value.trim());
-    }
-
-    function loadActivationLink() {
-      const link = localStorage.getItem('wirplus_activation_link');
-      if (link) {
-        activationLinkInput.value = link;
-      } else {
-        // لا يوجد رابط افتراضي ثابت
-      }
-    }
-
-    function saveSiteLink() {
-      localStorage.setItem('wirplus_site_link', siteLinkInput.value.trim());
-    }
-
-    function loadSiteLink() {
-      const link = localStorage.getItem('wirplus_site_link');
-      if (link) {
-        siteLinkInput.value = link;
-      } else {
-        // لا يوجد رابط افتراضي ثابت
-      }
-    }
-
-
-
-    function copyToClipboard(text) {
       try {
-        navigator.clipboard.writeText(text);
-      } catch (e) {
+        // استخدام Clipboard API الحديثة
+        await navigator.clipboard.writeText(value);
+      } catch (err) {
+        // العودة إلى الطريقة القديمة في حال فشل الحديثة
         const textArea = document.createElement('textarea');
-        textArea.value = text;
+        textArea.value = value;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
       }
+
+      const linesCount = value.split('\n').filter(l => l.trim().length > 0).length;
+      modalCount.textContent = `عدد الأسطر: ${linesCount}`;
+      openModal();
+    }
+
+
+
+
+
+
+
+    function downloadText() {
+      const value = resultBox.value.trim();
+      if (!value) {
+        alert('لا يوجد ناتج لتحميله.');
+        return;
+      }
+
+      const blob = new Blob([value], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Oraons_Codes_List.txt'; // اسم الملف الافتراضي
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
     function openModal() {
